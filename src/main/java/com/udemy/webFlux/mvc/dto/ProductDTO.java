@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Esta clase es la representación del objeto Producto
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

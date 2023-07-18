@@ -1,8 +1,10 @@
 package com.udemy.webFlux.mvc.core.constant;
 
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Controller;
-
+/**
+ * Esta clase contendrá los nombres de todas las colecciones.
+ *
+ * @author Emilio
+ */
 public class CollectionNames {
 
     private CollectionNames(){}

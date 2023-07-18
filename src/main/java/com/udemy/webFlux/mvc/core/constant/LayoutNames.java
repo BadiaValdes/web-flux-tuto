@@ -1,5 +1,10 @@
 package com.udemy.webFlux.mvc.core.constant;
 
+/**
+ * Esta clase posee todos los nombres de los templates o redirecciones para el controlador
+ *
+ * @author Emilio
+ */
 public class LayoutNames {
     private LayoutNames() {
     }
