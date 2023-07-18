@@ -1,0 +1,40 @@
+.container_body {
+    width: 90%;
+    margin: 0 auto;
+    min-height: 92vh;
+    padding-top: 10px;
+}
+
+.footer{
+    color: white;
+    height: 30px;
+    background: rgb(27, 27, 27);
+}
+
+.page-title{
+    text-align: center;
+    position: relative;
+}
+
+.divider {
+    position: relative;
+    width: 100%;
+}
+.divider:before{
+    content: "";
+    background: rgb(27, 27, 27);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    width: 100%;
+}
+
+.form-container{
+    width: 60%;
+    margin-left: 10%;
+}
+
+.form-buttons{
+    margin: 0 auto;
+}

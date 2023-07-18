@@ -67,6 +67,12 @@
 					</excludes>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>io.github.dathin</groupId>
+				<artifactId>jhusky</artifactId>
+				<version>1.0.9</version> <!--  Currently this is the latest version  -->
+			</plugin>
 		</plugins>
 	</build>
 

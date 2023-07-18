@@ -22,6 +22,9 @@ Librerías:
 - Thymeleaf
 - Spring Boot Dev Tools
 
+Plugins:
+- husky -> Para crear hooks de git
+
 ---
 
 ## Prerequisitos para probar el proyecto

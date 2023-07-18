@@ -1,6 +1,5 @@
 package com.udemy.webFlux.mvc.service;
 
-import com.udemy.webFlux.mvc.dto.ProductDTO;
 import com.udemy.webFlux.mvc.models.Product;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

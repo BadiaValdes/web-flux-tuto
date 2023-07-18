@@ -1,10 +1,12 @@
 package com.udemy.webFlux.mvc.service.impl;
 
-import com.udemy.webFlux.mvc.dto.ProductDTO;
+import com.udemy.webFlux.mvc.MvcApplication;
 import com.udemy.webFlux.mvc.models.Product;
 import com.udemy.webFlux.mvc.repository.ProductRepository;
 import com.udemy.webFlux.mvc.service.IProductService;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -20,7 +22,7 @@ import java.util.List;
 @Service
 public class ProductService implements IProductService {
     private final ProductRepository productRepository;
-
+    private static final Logger log = LoggerFactory.getLogger(ProductService.class);
     /**
      * Este método permite la creación de un producto en base de datos
      * @param product El producto que debe ser convertido en el controlador de DTO a DAO
@@ -42,11 +44,11 @@ public class ProductService implements IProductService {
     public Mono<Product> getOneProduct(String id) {
 
         // Option 2
-        Mono<Product> productMono = productRepository
+        /* Mono<Product> productMono = productRepository
                 .findAll() // Hacemos una busqueda general.
-                .filter(data -> data.getId() == id) // Filtramos los datos que vengan del flujo.
+                .filter(data -> data.getId().equals(id)) // Filtramos los datos que vengan del flujo.
                 .next(); // El next hace que devuelva un valor. En este caso el primero. Miralo como la implementación de un iterador.
-
+        */
         return productRepository.findById(id); // Option 1
     }
 
@@ -56,6 +58,7 @@ public class ProductService implements IProductService {
      */
     @Override
     public Flux<Product> getAllProducts() {
+        log.info("Realizando la operación findAll");
         return productRepository.findAll();
     }
 

@@ -6,7 +6,6 @@ import com.udemy.webFlux.mvc.repository.ProductRepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -32,7 +31,6 @@ public class MvcApplication implements CommandLineRunner { // CommandLineRunner 
 	@Override
 	// Dentro de este método, se pueden definir todos los comandos que queramos ejecutar una vez inicializada la aplicación.
 	public void run(String... args) throws Exception {
-
 		reactiveMongoTemplate.dropCollection(CollectionNames.PRODUCT_COLLECTION).subscribe();
 
 		Flux.just(
@@ -41,6 +39,6 @@ public class MvcApplication implements CommandLineRunner { // CommandLineRunner 
 				Product.builder().price(120.0).name("Monitor AOC").build()
 		)
 				.flatMap(product -> productRepository.save(product))
-				.subscribe(product -> log.info("Producto: " + product.getId()));
+				.subscribe(product -> log.info(String.format("Producto id: %s", product.getId())));
 	}
 }

@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
-@Document(collation = CollectionNames.PRODUCT_COLLECTION) // Anotación para definir la clase como un documento de mongo
+@Document(collection = CollectionNames.PRODUCT_COLLECTION) // Anotación para definir la clase como un documento de mongo
 @NoArgsConstructor // Anotación de lombook para definir un constructor sin argumentos
 @AllArgsConstructor // Anotación de lombook para definir un constructor con argumentos
 @Data // Anotación de lombook para definir los getters y setters
