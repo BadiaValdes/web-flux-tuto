@@ -12,10 +12,10 @@
             crossorigin="anonymous"></script>
 </head>
 <body>
-<div th:replace="part/nav::nav"></div>
+<div th:replace="~{part/nav::nav}"></div>
 <div class="container_body">
-    <div th:replace="${page}::content"> </div>
+    <div th:replace="~{${page}::content}"> </div>
 </div>
-<footer class="footer" th:replace="part/footer::footer"></footer>
+<footer class="footer" th:replace="~{part/footer::footer}"></footer>
 </body>
 </html>

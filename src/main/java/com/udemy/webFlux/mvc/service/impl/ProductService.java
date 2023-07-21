@@ -1,6 +1,5 @@
 package com.udemy.webFlux.mvc.service.impl;
 
-import com.udemy.webFlux.mvc.MvcApplication;
 import com.udemy.webFlux.mvc.models.Product;
 import com.udemy.webFlux.mvc.repository.ProductRepository;
 import com.udemy.webFlux.mvc.service.IProductService;

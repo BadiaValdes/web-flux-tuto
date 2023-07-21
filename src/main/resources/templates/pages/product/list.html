@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-  <link href="../../../static/css/page.css" rel="stylesheet" type="text/css">
+  <link href="../../static/css/page.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 
 <div th:fragment="content">
-  <h3 class="page-title">Productos <a th:href="@{'/product/create'}"  class="btn btn-outline-success"><i class="bi bi-plus"></i></a>
+  <h3 class="page-title"><span data-th-text="#{product}"> </span> <a th:href="@{'/product/create'}"  class="btn btn-outline-success"><i class="bi bi-plus"></i></a>
   </h3>
   <table class="table">
     <thead>
