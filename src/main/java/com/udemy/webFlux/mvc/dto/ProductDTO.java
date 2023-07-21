@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 public class ProductDTO {
-    public String id;
+    private String id;
     private String name;
     private Double price;
 }
