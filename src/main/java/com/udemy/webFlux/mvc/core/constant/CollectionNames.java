@@ -9,4 +9,5 @@ public class CollectionNames {
 
     private CollectionNames(){}
     public static final String PRODUCT_COLLECTION = "product";
+    public static final String CATEGORY_COLLECTION = "category";
 }
