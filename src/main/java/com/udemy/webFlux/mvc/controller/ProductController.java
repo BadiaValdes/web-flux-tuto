@@ -114,7 +114,7 @@ public class ProductController {
     @PostMapping("/update/{id}")
     public String updateProduct(@PathVariable("id") String id, @ModelAttribute ProductDTO productDTO) {
         Product product = ProductConverter.productDtoToProduct(productDTO);
-        product.setId(id);
+        product.set_id(id);
         productService.createProduct(product).subscribe(data -> log.info("Elemento modificado")); // Estamos usando el mismo metodo de crear debido a que no hay cambios significativos entre los dos. Pero en caso que sea necesario, se debe crear otro método.
         return LayoutNames.REDIRECT_PRODUCT;
     }

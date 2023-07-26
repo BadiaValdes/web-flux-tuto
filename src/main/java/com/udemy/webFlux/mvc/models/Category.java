@@ -22,7 +22,7 @@ import java.util.List;
 @Builder // Anotación de lombook para implementar el patrón builder en la clase
 public class Category {
     @Id // Anotación de spring boot para identificar un elemento como llave primaria
-    private String id;
+    private String _id;
 
     private String name;
     @CreatedDate // Anotación para definir que al campo de abajo se le debe asignar en creación la fecha actual
@@ -32,6 +32,6 @@ public class Category {
 
     /** FK */
     @ReadOnlyProperty
-    @DocumentReference(lookup = "{'category':?#{#self.id}}")
+    @DocumentReference(lookup = "{'category':?#{#self._id}}")
     private List<Product> productList;
 }

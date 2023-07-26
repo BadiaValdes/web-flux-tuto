@@ -20,7 +20,7 @@ public class ProductConverter {
     public static ProductDTO productToProductDto(Product product){
         return ProductDTO
                 .builder()
-                .id(product.getId())
+                .id(product.get_id())
                 .name(product.getName())
                 .price(product.getPrice())
                 .build();

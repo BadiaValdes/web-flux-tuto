@@ -94,9 +94,9 @@ public class MvcApplication implements CommandLineRunner { // CommandLineRunner 
         // Utilizamos Zip With para unirlo con nuestros productos. Estos son flux por lo que usamos collectList() para convertirlos a mono
         // Para volver a convertir el flujo en FLUX debemos utilizar flatMapMany
         // Dentro adicionamos la categoria a nuestros productos
-        // Devolvemos un flux from stream
+        // Devolvemos un flux from iterable
         // Con el flatMap de siempre guardamos
-                categoryFlux
+        categoryFlux
                 .flatMap(category -> reactiveMongoTemplate.save(category))
                 .filter(category -> category.getName().equalsIgnoreCase("Computer"))
                 .next()

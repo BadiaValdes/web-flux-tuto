@@ -19,7 +19,7 @@ import java.util.Date;
 @Builder // Anotación de lombook para implementar el patrón builder en la clase
 public class Product {
     @Id // Anotación de spring boot para identificar un elemento como llave primaria
-    private String id;
+    private String _id;
 
     private String name;
     private Double price;
