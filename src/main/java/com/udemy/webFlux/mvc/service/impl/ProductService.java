@@ -9,13 +9,18 @@ import com.udemy.webFlux.mvc.service.IProductService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -29,6 +34,7 @@ public class ProductService implements IProductService {
     private final ProductRepository productRepository;
     private static final Logger log = LoggerFactory.getLogger(ProductService.class);
     private final ReactiveMongoTemplate reactiveMongoTemplate;
+    private final Path root = Paths.get("./src/main/resources/upload");
 
     /**
      * Este método permite la creación de un producto en base de datos
@@ -37,10 +43,25 @@ public class ProductService implements IProductService {
      * @return Mono-Product
      */
     @Override
-    public Mono<Product> createProduct(Product product, String catId) {
-        product.setCategoryId(catId);
+    public Mono<Product> createProduct(Product product, FilePart file) {
+        product.setImage(file.filename());
+        return productRepository
+                .save(product)
+                .flatMap(data -> file
+                        .transferTo(root.resolve(file.filename()))
+                        .thenReturn(data)
+        );
+    }
+
+    /**
+     * Este método permite la actualización de un producto en base de datos
+     *
+     * @param product El producto que debe ser convertido en el controlador de DTO a DAO
+     * @return Mono-Product
+     */
+    @Override
+    public Mono<Product> updateProduct(Product product) {
         return productRepository.save(product);
-        // Iba a usar map, pero este devuelve un objeto.
     }
 
     /**

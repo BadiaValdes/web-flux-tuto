@@ -8,7 +8,7 @@
 <div th:fragment="content">
   <h3 class="page-title divider">Modificar Producto</h3>
   <div class="form-container">
-    <form action="#" method="post" th:object="${product}" th:action="@{'/product/update/' + *{_id}}">
+    <form action="#" method="post" th:object="${product}" th:action="@{'/product/update/' + ${product.id}}">
       <div class="mb-3">
         <label for="nombre" class="form-label">Nombre</label>
         <input type="text" class="form-control" th:field="*{name}" id="nombre" placeholder="name@example.com">

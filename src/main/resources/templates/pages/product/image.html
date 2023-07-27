@@ -1,0 +1,19 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link href="../../static/css/page.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<div th:fragment="content">
+  <p th:text="${product.image}"></p>
+  <p th:text="${product._id}"></p>
+  <p th:text="${product.name}"></p>
+  <p th:text="${product.price}"></p>
+  <a th:href="@{/product/uploads/{name}(name=${product.image})}">aqui</a>
+  <img th:src="@{/product/uploads/{name}(name=${product.image})}" width="200" height="200">
+</div>
+</body>
+</html>

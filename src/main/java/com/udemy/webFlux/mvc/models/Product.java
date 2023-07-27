@@ -20,12 +20,11 @@ import java.util.Date;
 public class Product {
     @Id // Anotación de spring boot para identificar un elemento como llave primaria
     private String _id;
-
     private String name;
+    private String image;
     private Double price;
     @CreatedDate // Anotación para definir que al campo de abajo se le debe asignar en creación la fecha actual
     private Date createdAt;
-
     /** FK */
     private String categoryId;
 }

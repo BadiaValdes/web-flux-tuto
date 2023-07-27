@@ -41,10 +41,10 @@ public class MvcApplication implements CommandLineRunner { // CommandLineRunner 
         );
 
         Flux<Product> productFlux =  Flux.just(
-                Product.builder().price(200.0).name("Monitor RCA").build(),
-                Product.builder().price(210.0).name("Monitor Samsung").build(),
-                Product.builder().price(120.0).name("Monitor AOC").build(),
-                Product.builder().price(120.0).name("Monitor BQ").build()
+                Product.builder().price(200.0).name("Monitor RCA").image("Arquitectura-AiQuip.png").build(),
+                Product.builder().price(210.0).name("Monitor Samsung").image("Arquitectura-AiQuip.png").build(),
+                Product.builder().price(120.0).name("Monitor AOC").image("Arquitectura-AiQuip.png").build(),
+                Product.builder().price(120.0).name("Monitor BQ").image("Arquitectura-AiQuip.png").build()
         );
 
 		// Crear los datos bases con flatMap. Esto reptie la acción de guardar producto por cada elemento de categoría

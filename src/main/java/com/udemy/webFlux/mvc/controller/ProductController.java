@@ -9,14 +9,25 @@ import com.udemy.webFlux.mvc.service.IProductService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.spring6.context.webflux.ReactiveDataDriverContextVariable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.naming.spi.Resolver;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 
 /**
@@ -31,6 +42,7 @@ public class ProductController {
 
     private final ReactiveMongoTemplate reactiveMongoTemplate;
     private static final Logger log = LoggerFactory.getLogger(ProductController.class); // Logger system.
+
 
     /**
      * Este método se encarga de devolver al front el listado de productos.
@@ -86,16 +98,18 @@ public class ProductController {
      * @return Redirect a product
      */
     @PostMapping("/create")
-    public String createProduct(@ModelAttribute("product") ProductDTO productDTO) {
+    public String createProduct(@ModelAttribute("product") ProductDTO productDTO, @RequestPart("image") FilePart image) {
         log.info("I am creating and object");
+        log.info(image.name());
         Product newProduct = ProductConverter.productDtoToProduct(productDTO); // Esto es una clase auxiliar que permite el mapeo manual de objeto. Se aconseja usar Jackson.
-        productService.createProduct(newProduct, productDTO.getCategoryId()).subscribe(data -> log.info("Data saved")); // Salvamos el dato y nos subscribimos a la llamada para comprobar que se realizó satisfactoriamente.
+        productService.createProduct(newProduct, image).subscribe(data -> log.info("Data saved")); // Salvamos el dato y nos subscribimos a la llamada para comprobar que se realizó satisfactoriamente.
         return LayoutNames.REDIRECT_PRODUCT;
     }
 
     /**
      * Este metodo está dedicado a actualizar un producto
-     * @param id Este id se recibe de la url y representa el identificador de un objeto
+     *
+     * @param id    Este id se recibe de la url y representa el identificador de un objeto
      * @param model Modelo que nos permite pasar datos hacia el front
      * @return layout
      */
@@ -112,7 +126,8 @@ public class ProductController {
 
     /**
      * Este metodo se encarga de el proceso de modificar los datos que vengan del formulario del front
-     * @param id Representa el id que viene de la url del front. Otra forma de hacer eso es añadir en los input del front un hidden con el id y nos quitamos esta declaradción
+     *
+     * @param id         Representa el id que viene de la url del front. Otra forma de hacer eso es añadir en los input del front un hidden con el id y nos quitamos esta declaradción
      * @param productDTO Representa el producto que proviene del formulario
      * @return Redirect To Product
      */
@@ -120,14 +135,44 @@ public class ProductController {
     public String updateProduct(@PathVariable("id") String id, @ModelAttribute ProductDTO productDTO) {
         Product product = ProductConverter.productDtoToProduct(productDTO);
         product.set_id(id);
-        productService.createProduct(product, productDTO.getCategoryId()).subscribe(data -> log.info("Elemento modificado")); // Estamos usando el mismo metodo de crear debido a que no hay cambios significativos entre los dos. Pero en caso que sea necesario, se debe crear otro método.
+        productService.updateProduct(product).subscribe(data -> log.info("Elemento modificado")); // Estamos usando el mismo metodo de crear debido a que no hay cambios significativos entre los dos. Pero en caso que sea necesario, se debe crear otro método.
         return LayoutNames.REDIRECT_PRODUCT;
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteProduct(@PathVariable("id") String id){
+    public String deleteProduct(@PathVariable("id") String id) {
         productService.deleteProduct(id).subscribe(data -> log.info("Elemento eliminado"));
         return LayoutNames.REDIRECT_PRODUCT;
     }
+
+    /**
+     * Get product image
+     **/
+    @GetMapping("/uploads/{name:.+}")
+    public Mono<ResponseEntity<Resource>> getImage(@PathVariable("name") String name) throws MalformedURLException {
+
+        log.info(name);
+
+        Path imageRoute = Paths.get("./src/main/resources/upload").resolve(name).toAbsolutePath();
+
+        log.info(imageRoute.toString());
+
+        Resource image = new UrlResource(imageRoute.toUri());
+
+        return Mono.just(ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFilename() + "\" ")
+                .body(image));
+    }
+
+    /**
+     * Get product image
+     **/
+    @GetMapping("/show/{id}")
+    public String showImage(Model model, @PathVariable("id") String id) {
+        model.addAttribute("product", productService.getOneProduct(id)); // Esto me permite pasarle un objeto al formulario, de esta forma, en el front, podemos decir que input pertenece a cada campo
+        model.addAttribute("page", "pages/product/image");
+        return LayoutNames.LAYOUT_NAME;
+    }
+
 
 }

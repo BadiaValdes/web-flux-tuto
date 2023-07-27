@@ -29,6 +29,7 @@
       <td>
         <div class="btn-group" role="group" aria-label="Basic example">
         <a th:href="@{'/product/update/'+ ${product.id}}" class="btn btn-outline-warning"><i class="bi bi-pencil-square"></i></a>
+        <a th:href="@{'/product/show/'+ ${product.id}}" class="btn btn-outline-primary"><i class="bi bi-eye"></i></a>
         <a th:href="@{'/product/delete/'+ ${product.id}}"  class="btn btn-outline-danger"><i class="bi bi-bucket"></i></a>
         </div>
       </td>
