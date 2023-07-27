@@ -1,11 +1,17 @@
 package com.udemy.webFlux.mvc.service.impl;
 
+import com.udemy.webFlux.mvc.core.converter.ProductConverter;
+import com.udemy.webFlux.mvc.dto.ProductDTO;
+import com.udemy.webFlux.mvc.models.Category;
 import com.udemy.webFlux.mvc.models.Product;
 import com.udemy.webFlux.mvc.repository.ProductRepository;
 import com.udemy.webFlux.mvc.service.IProductService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -22,20 +28,26 @@ import java.util.List;
 public class ProductService implements IProductService {
     private final ProductRepository productRepository;
     private static final Logger log = LoggerFactory.getLogger(ProductService.class);
+    private final ReactiveMongoTemplate reactiveMongoTemplate;
+
     /**
      * Este método permite la creación de un producto en base de datos
+     *
      * @param product El producto que debe ser convertido en el controlador de DTO a DAO
      * @return Mono-Product
      */
     @Override
-    public Mono<Product> createProduct(Product product) {
+    public Mono<Product> createProduct(Product product, String catId) {
+        product.setCategoryId(catId);
         return productRepository.save(product);
+        // Iba a usar map, pero este devuelve un objeto.
     }
 
     /**
      * Obtener un prodcuto dado un id. En este caso estamos utilizando dos vias. La primera es la del return.
      * Una búsequda sencilla a mono.
      * La segunda es utilizar un flux, filtrar los datos y solo obtener la primera ocurrencia.
+     *
      * @param id El id del objeto a buscar
      * @return Mono product
      */
@@ -53,16 +65,32 @@ public class ProductService implements IProductService {
 
     /**
      * Buscar todos los productos almacenados en la colección
+     *
      * @return Flux product
      */
     @Override
-    public Flux<Product> getAllProducts() {
-        log.info("Realizando la operación findAll");
-        return productRepository.findAll();
+    public Flux<ProductDTO> getAllProducts() {
+        return productRepository
+                .findAll()
+                .flatMap(element -> {
+                    Query q = Query.query(Criteria.where("_id").is(element.getCategoryId()));
+                    Mono<Category> categoryMono = reactiveMongoTemplate
+                            .findOne(q, Category.class)
+                            .switchIfEmpty(Mono.just(Category.builder().name("no Category").build()));
+                    return Mono.zip(Mono.just(element), categoryMono);
+                })
+                .flatMap(tuple -> {
+                    ProductDTO productDTO = ProductConverter.productToProductDto(tuple.getT1());
+                    productDTO.setCategory(tuple.getT2());
+                    return Mono.just(productDTO);
+                })
+                .onErrorResume(d -> Flux.just(new ProductDTO()));
+
     }
 
     /**
      * Este metodo se encargará de borrar en base de datos el elemento pasado por parámetros.
+     *
      * @param id Representa el id del objeto a eliminar
      * @return Empty
      */
@@ -73,6 +101,7 @@ public class ProductService implements IProductService {
 
     /**
      * Se eliminaran varios productos de forma simultanea.
+     *
      * @param id Un arreglo que posee todos los id de los elementos a eliminar
      * @return Empty
      */

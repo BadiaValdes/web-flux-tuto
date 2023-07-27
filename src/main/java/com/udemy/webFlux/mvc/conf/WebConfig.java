@@ -63,6 +63,7 @@ public class WebConfig implements ApplicationContextAware, WebFluxConfigurer  {
         resolver.setSuffix(".html"); // Esto hace referencia a la extensión
         resolver.setTemplateMode(TemplateMode.HTML); // El decodificador a utilizar
         resolver.setCacheable(false);
+        resolver.setCharacterEncoding("UTF-8");
         resolver.setCheckExistence(false);
         return resolver;
     }

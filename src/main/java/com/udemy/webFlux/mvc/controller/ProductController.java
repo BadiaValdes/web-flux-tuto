@@ -3,11 +3,13 @@ package com.udemy.webFlux.mvc.controller;
 import com.udemy.webFlux.mvc.core.constant.LayoutNames;
 import com.udemy.webFlux.mvc.core.converter.ProductConverter;
 import com.udemy.webFlux.mvc.dto.ProductDTO;
+import com.udemy.webFlux.mvc.models.Category;
 import com.udemy.webFlux.mvc.models.Product;
 import com.udemy.webFlux.mvc.service.IProductService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,7 @@ public class ProductController {
     // Si no uso el decorador @AllArgsConstructor entonces debo poner aquí arriba @Autowired
     private final IProductService productService; // Esta es la conexión al servicio de Producto. Se realiza mediante la interfaz para garantizar solo acceder a los métodos necesarios.
 
+    private final ReactiveMongoTemplate reactiveMongoTemplate;
     private static final Logger log = LoggerFactory.getLogger(ProductController.class); // Logger system.
 
     /**
@@ -37,7 +40,7 @@ public class ProductController {
      */
     @GetMapping()
     public String listNormal(Model model) {
-        Flux<Product> productFlux = productService.getAllProducts();
+        Flux<ProductDTO> productFlux = productService.getAllProducts();
         model.addAttribute("products", productFlux);
         model.addAttribute("page", "pages/product/list"); // Esto de aquí es una simulación de un layout.
         return LayoutNames.LAYOUT_NAME;
@@ -52,7 +55,7 @@ public class ProductController {
      */
     @GetMapping("/back-pressure")
     public String listBackP(Model model) {
-        Flux<Product> productFlux = productService.getAllProducts()
+        Flux<ProductDTO> productFlux = productService.getAllProducts()
                 .delayElements(Duration.ofSeconds(1)); // Como los datos cargan rápido, es necesario agregar un método al subscribible para que demore la entrega de cada elemento por 1 segundo
 
         model.addAttribute("products", new ReactiveDataDriverContextVariable(productFlux, 1)); // En este caso estamos probando el objeto ReactiveDataDriverContextVariable que recibe un Flux por parámetro y una cantidad de elementos a devolver a la vez
@@ -70,6 +73,8 @@ public class ProductController {
     @GetMapping("/create")
     public String createProduct(Model model) {
         model.addAttribute("product", new ProductDTO()); // Esto me permite pasarle un objeto al formulario, de esta forma, en el front, podemos decir que input pertenece a cada campo
+        model.addAttribute("cat", new Category()); // Esto me permite pasarle un objeto al formulario, de esta forma, en el front, podemos decir que input pertenece a cada campo
+        model.addAttribute("categories", reactiveMongoTemplate.findAll(Category.class)); // Para no acceder el repositorio de categorias, utilizamos directamente reactiveMongoTemplate para acceder a mongo
         model.addAttribute("page", "pages/product/create"); // Esto de aquí es una simulación de un layout.
         return LayoutNames.LAYOUT_NAME;
     }
@@ -81,10 +86,10 @@ public class ProductController {
      * @return Redirect a product
      */
     @PostMapping("/create")
-    public String createProduct(@ModelAttribute ProductDTO productDTO) {
+    public String createProduct(@ModelAttribute("product") ProductDTO productDTO) {
         log.info("I am creating and object");
         Product newProduct = ProductConverter.productDtoToProduct(productDTO); // Esto es una clase auxiliar que permite el mapeo manual de objeto. Se aconseja usar Jackson.
-        productService.createProduct(newProduct).subscribe(data -> log.info("Data saved")); // Salvamos el dato y nos subscribimos a la llamada para comprobar que se realizó satisfactoriamente.
+        productService.createProduct(newProduct, productDTO.getCategoryId()).subscribe(data -> log.info("Data saved")); // Salvamos el dato y nos subscribimos a la llamada para comprobar que se realizó satisfactoriamente.
         return LayoutNames.REDIRECT_PRODUCT;
     }
 
@@ -115,7 +120,7 @@ public class ProductController {
     public String updateProduct(@PathVariable("id") String id, @ModelAttribute ProductDTO productDTO) {
         Product product = ProductConverter.productDtoToProduct(productDTO);
         product.set_id(id);
-        productService.createProduct(product).subscribe(data -> log.info("Elemento modificado")); // Estamos usando el mismo metodo de crear debido a que no hay cambios significativos entre los dos. Pero en caso que sea necesario, se debe crear otro método.
+        productService.createProduct(product, productDTO.getCategoryId()).subscribe(data -> log.info("Elemento modificado")); // Estamos usando el mismo metodo de crear debido a que no hay cambios significativos entre los dos. Pero en caso que sea necesario, se debe crear otro método.
         return LayoutNames.REDIRECT_PRODUCT;
     }
 

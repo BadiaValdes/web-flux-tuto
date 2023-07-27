@@ -102,7 +102,7 @@ public class MvcApplication implements CommandLineRunner { // CommandLineRunner 
                 .next()
                 .zipWith(productFlux.collectList())
                 .flatMapMany(t1 -> Flux.fromIterable(t1.getT2())
-                            .doOnNext(data -> data.setCategory(t1.getT1()))
+                            .doOnNext(data -> data.setCategoryId(t1.getT1().get_id()))
                 )
                 .flatMap(data -> productRepository.save(data))
                 .subscribe(product -> log.info("Producto created"));

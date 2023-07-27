@@ -27,6 +27,5 @@ public class Product {
     private Date createdAt;
 
     /** FK */
-    @DocumentReference()
-    private Category category;
+    private String categoryId;
 }

@@ -8,7 +8,7 @@
 <div th:fragment="content">
   <h3 class="page-title divider">Modificar Producto</h3>
   <div class="form-container">
-    <form action="#" method="post" th:object="${product}" th:action="@{'/product/update/' + *{id}}">
+    <form action="#" method="post" th:object="${product}" th:action="@{'/product/update/' + *{_id}}">
       <div class="mb-3">
         <label for="nombre" class="form-label">Nombre</label>
         <input type="text" class="form-control" th:field="*{name}" id="nombre" placeholder="name@example.com">
@@ -17,6 +17,9 @@
         <label for="price" class="form-label">Precio</label>
         <input type="text" class="form-control" th:field="*{price}"  id="price" placeholder="name@example.com">
       </div>
+      <select class="form-select" th:field="*{categoryId}" aria-label="Default select example">
+        <option th:each="cate: ${categories}" th:text="${cate.name}" th:value="${cate._id}"></option>
+      </select>
         <div class="btn-group form-buttons" role="group" aria-label="Basic outlined example">
           <button type="submit" class="btn btn-outline-primary"><i class="bi bi-check"></i> Aceptar</button>
           <a th:href="@{/product}" type="button" class="btn btn-outline-danger"><i class="bi bi-x"></i> Cancelar</a>

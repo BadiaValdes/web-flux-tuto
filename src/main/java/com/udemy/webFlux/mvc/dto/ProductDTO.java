@@ -1,5 +1,6 @@
 package com.udemy.webFlux.mvc.dto;
 
+import com.udemy.webFlux.mvc.models.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,4 +17,6 @@ public class ProductDTO {
     private String id;
     private String name;
     private Double price;
+    private String categoryId;
+    private Category category;
 }

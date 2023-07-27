@@ -22,6 +22,7 @@ public class ProductConverter {
                 .builder()
                 .id(product.get_id())
                 .name(product.getName())
+                .categoryId(product.getCategoryId())
                 .price(product.getPrice())
                 .build();
     }
@@ -35,6 +36,7 @@ public class ProductConverter {
         return Product.builder()
                 .name(productDTO.getName())
                 .price(productDTO.getPrice())
+                .categoryId(productDTO.getCategoryId())
                 .build();
     }
 }

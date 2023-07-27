@@ -16,6 +16,7 @@
       <th scope="col">Id (Solo prueba, no se debe poner)</th>
       <th scope="col">Nombre</th>
       <th scope="col">Precio</th>
+      <th scope="col">Categoría</th>
       <th scope="col">Acciones</th>
     </tr>
     </thead>
@@ -24,6 +25,7 @@
       <th scope="row" th:text="${product.id}"></th>
       <td th:text="${product.name}"></td>
       <td th:text="${product.price}"></td>
+      <td th:text="${product.category.name}"></td>
       <td>
         <div class="btn-group" role="group" aria-label="Basic example">
         <a th:href="@{'/product/update/'+ ${product.id}}" class="btn btn-outline-warning"><i class="bi bi-pencil-square"></i></a>
