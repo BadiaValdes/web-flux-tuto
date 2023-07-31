@@ -1,7 +1,9 @@
 package com.udemy.webFlux.mvc.service.impl;
 
+import com.udemy.webFlux.mvc.conf.CustomWebClient;
 import com.udemy.webFlux.mvc.core.converter.ProductConverter;
 import com.udemy.webFlux.mvc.dto.ProductDTO;
+import com.udemy.webFlux.mvc.dto.WebClientProduct;
 import com.udemy.webFlux.mvc.models.Category;
 import com.udemy.webFlux.mvc.models.Product;
 import com.udemy.webFlux.mvc.repository.ProductRepository;
@@ -32,6 +34,9 @@ import java.util.List;
 @Service
 public class ProductService implements IProductService {
     private final ProductRepository productRepository;
+
+    private final CustomWebClient customWebClient;
+
     private static final Logger log = LoggerFactory.getLogger(ProductService.class);
     private final ReactiveMongoTemplate reactiveMongoTemplate;
     private final Path root = Paths.get("./src/main/resources/upload");
@@ -45,8 +50,17 @@ public class ProductService implements IProductService {
     @Override
     public Mono<Product> createProduct(Product product, FilePart file) {
         product.setImage(file.filename());
-        return productRepository
-                .save(product)
+
+        return customWebClient
+                .getProducts()
+                .next()
+                .onErrorResume(d -> Mono.just(WebClientProduct.builder().name("data error").build())) // If the above call return a error, we need to change de data
+                .flatMap(data -> {
+                    product.setName(data.getName());
+                    return  productRepository
+                            .save(product);
+                })
+
                 .flatMap(data -> file
                         .transferTo(root.resolve(file.filename()))
                         .thenReturn(data)
