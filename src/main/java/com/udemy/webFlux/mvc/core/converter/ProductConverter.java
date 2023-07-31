@@ -22,6 +22,7 @@ public class ProductConverter {
                 .builder()
                 .id(product.get_id())
                 .name(product.getName())
+                .image(product.getImage())
                 .categoryId(product.getCategoryId())
                 .price(product.getPrice())
                 .build();
