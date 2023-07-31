@@ -1,6 +1,6 @@
 package com.udemy.webFlux.mvc.conf;
 
-import com.udemy.webFlux.mvc.api.ProductApiComponent;
+import com.udemy.webFlux.mvc.api.ProductApiHandler;
 import com.udemy.webFlux.mvc.core.constant.ApiNames;
 import com.udemy.webFlux.mvc.dto.ProductDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,27 +19,34 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartRequest;
 import org.springframework.web.reactive.function.server.*;
 
+
+/***
+ * Esta clase está creada para probar el uso del ruteo mediante función en WebFlux.
+ * Además vemos como documentar nuestros endpoint.
+ *
+ * @author Emilio
+ */
 @Configuration
 public class ApiRouter {
 
     @Bean
-    @RouterOperations(
+    @RouterOperations( // Nos permite crear un objeto de documentación de operaciones de rutas
             {
-                    @RouterOperation(
-                            path = ApiNames.API_BASE + ApiNames.API_PRODUCT,
+                    @RouterOperation( // Esto lo hacemos por cada ruta que queramos documentar.
+                            path = ApiNames.API_BASE + ApiNames.API_PRODUCT, // El path que estamos utilizando aqui es el mismo que debemos poner en la ruta
                             produces = {
-                                    MediaType.APPLICATION_JSON_VALUE
+                                    MediaType.APPLICATION_JSON_VALUE // Formato del dato que vamos a devolver
                             },
-                            method = RequestMethod.GET,
-                            beanClass = ProductApiComponent.class,
-                            beanMethod = "getAllProducts",
-                            operation = @Operation(
-                                    operationId = "getAllProducts",
-                                    responses = {
-                                            @ApiResponse(
-                                                    responseCode = "200",
-                                                    description = "successful operation",
-                                                    content = @Content(schema = @Schema(
+                            method = RequestMethod.GET, // Método a utilizar
+                            beanClass = ProductApiHandler.class, // Clase que se encarga del manejo de la ruta
+                            beanMethod = "getAllProducts", // Nombre del método que trabaja con la ruta
+                            operation = @Operation( // Infor de la operación a realizar
+                                    operationId = "getAllProducts", // Nombre de la operacion
+                                    responses = { // Las diferentes respuestas que se pueden dar
+                                            @ApiResponse( // Esta respuesta corresponde a que todo esté bien
+                                                    responseCode = "200", // Codigo de respuesta
+                                                    description = "successful operation", // Descripcion de lo que deberia devolver
+                                                    content = @Content(schema = @Schema( // Aqui definimos el objeto que va a devolver nuestro endpoint
                                                             implementation = ProductDTO.class
                                                     ))
                                             )
@@ -53,7 +60,7 @@ public class ApiRouter {
                                     MediaType.APPLICATION_JSON_VALUE
                             },
                             method = RequestMethod.GET,
-                            beanClass = ProductApiComponent.class,
+                            beanClass = ProductApiHandler.class,
                             beanMethod = "getOneProduct",
                             operation = @Operation(
                                     operationId = "getOneProduct",
@@ -78,7 +85,7 @@ public class ApiRouter {
                                     MediaType.APPLICATION_JSON_VALUE
                             },
                             method = RequestMethod.POST,
-                            beanClass = ProductApiComponent.class,
+                            beanClass = ProductApiHandler.class,
                             beanMethod = "createProduct",
                             operation = @Operation(
                                     operationId = "createProduct",
@@ -96,11 +103,11 @@ public class ApiRouter {
                     ),
             }
     )
-    RouterFunction<ServerResponse> routerProduct (ProductApiComponent productApiComponent){
-        return RouterFunctions.route()
-                .GET(ApiNames.API_BASE + ApiNames.API_PRODUCT, productApiComponent::getAllProducts)
-                .GET(ApiNames.API_BASE + ApiNames.API_PRODUCT + "/{id}", productApiComponent::getOneProduct)
-                .POST(ApiNames.API_BASE + ApiNames.API_PRODUCT, RequestPredicates.contentType(MediaType.MULTIPART_FORM_DATA), productApiComponent::createProduct)
+    RouterFunction<ServerResponse> routerProduct (ProductApiHandler productApiHandler){
+        return RouterFunctions.route() // En este caso estamos siguiendo un patron Builder para constuir las rutas
+                .GET(ApiNames.API_BASE + ApiNames.API_PRODUCT, productApiHandler::getAllProducts) // Definimos las rutas a nuestro gusto
+                .GET(ApiNames.API_BASE + ApiNames.API_PRODUCT + "/{id}", productApiHandler::getOneProduct)
+                .POST(ApiNames.API_BASE + ApiNames.API_PRODUCT, RequestPredicates.contentType(MediaType.MULTIPART_FORM_DATA), productApiHandler::createProduct)
                 .build();
     }
 }

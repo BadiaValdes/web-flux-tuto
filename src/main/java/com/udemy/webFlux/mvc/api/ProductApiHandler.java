@@ -12,9 +12,6 @@ import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.http.codec.multipart.FormFieldPart;
 import org.springframework.http.codec.multipart.Part;
 import org.springframework.stereotype.Component;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.reactive.function.BodyExtractor;
 import org.springframework.web.reactive.function.BodyExtractors;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -22,8 +19,17 @@ import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
+/***
+ * Esta clase es la que se utilizará en ApiRouter.
+ * No es un controller como estamos acostumbrados a ver. Este recibe el nombre de handler ya que
+ * su inica función es manejar el proceso de llamada al service; no se encarga del mapeo de URL.
+ * Es obligatorio que todos los métodos que se implementen aquí, tengan como parámetro ServerRequest req
+ * ya que mediante este podremos acceder a las variables por parámetros o del cuerpo.
+ *
+ * @author Emilio
+ */
 @Component
-public class ProductApiComponent {
+public class ProductApiHandler {
 
     @Autowired
     private IProductService productService;
@@ -33,14 +39,35 @@ public class ProductApiComponent {
 
     private static final Logger log = LoggerFactory.getLogger(ProductController.class);
 
+    /**
+     * Este método se encarga de obtener todos los productos.
+     *
+     * @param req
+     * @return ServerResponse
+     */
     public Mono<ServerResponse> getAllProducts(ServerRequest req){
         return ServerResponse.ok().body(productService.getAllProducts(), ProductDTO.class);
     }
 
+    /***
+     * Devuelve un producto mediante el id pasado por parámetros. Para acceder al id
+     * utilizamos el ServerRequest req. Especificamente req.pathVariable("id")
+     *
+     * @param req
+     * @return
+     */
     public Mono<ServerResponse> getOneProduct(ServerRequest req){
         return ServerResponse.ok().body(productService.getOneProduct(req.pathVariable("id")), ProductDTO.class);
     }
 
+    /**
+     * Este método es un poco más complejo. Su funcionamiento es crear un producto, pero en este caso
+     * debemos trabajar con un formData por lo que tenemos que utilizar req.body(BodyExtractors.toMultipartData())
+     * para obtener el cuerpo y esto lo que devuelve es un mono.
+     *
+     * @param req
+     * @return
+     */
     public Mono<ServerResponse> createProduct(ServerRequest req){
         return req.body(BodyExtractors.toMultipartData()).flatMap(
                 data -> {
