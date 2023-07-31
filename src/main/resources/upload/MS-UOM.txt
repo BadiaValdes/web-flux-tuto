@@ -1,0 +1,44 @@
+# Welcome to Altair GraphQL Client.
+# You can send your request using CmdOrCtrl + Enter.
+
+# Enter your graphQL query here.
+
+query getAllUOM {
+  getUom(paginationDto: {
+    skip: 0,
+    take: -1
+  }) {
+    count
+    items {
+      id
+    name
+      
+  } 
+}
+  }
+
+mutation removeUom {
+  removeUom(ids: ["a2c551b6-180e-4f9d-931d-2f6df6764e97"])
+}
+
+mutation createUom {
+  createUom(createUom: {
+    name: "TEST UOM",
+    uomType: "d5c053c6-9878-4e83-9063-6556365cb566",
+    uomSystem: "fbc19046-53fd-4e09-8ba4-096929312700",
+    symbol: "m2"
+    description: "ZZ"
+  }) {
+    id,
+    name
+  }
+}
+
+mutation updateUom {
+  updateUom(updateUom: {
+    id: "8431a1cc-2db3-470e-837f-0068fe94d14f",
+    name: "1234"
+  }) {
+    id
+  }
+}

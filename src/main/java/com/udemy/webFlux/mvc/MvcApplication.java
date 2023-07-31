@@ -4,6 +4,8 @@ import com.udemy.webFlux.mvc.core.constant.CollectionNames;
 import com.udemy.webFlux.mvc.models.Category;
 import com.udemy.webFlux.mvc.models.Product;
 import com.udemy.webFlux.mvc.repository.ProductRepository;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
 import lombok.AllArgsConstructor;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -18,6 +20,11 @@ import reactor.core.publisher.Flux;
 @SpringBootApplication
 @EnableReactiveMongoAuditing // Nos permite utilizar las anotaciones de CreationDate
 @AllArgsConstructor
+@OpenAPIDefinition(info = @Info(
+        title = "Spring WebFlux Tutorial",
+        version = "1.0",
+        description = "Spring WebFlux CRUD Example"
+))
 public class MvcApplication implements CommandLineRunner { // CommandLineRunner permite la implementación del método run que se ejecuta al inicio del sistema
 
     private final ProductRepository productRepository;
