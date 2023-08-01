@@ -1,5 +1,8 @@
 package com.udemy.webFlux.mvc.conf;
 
+import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import io.github.resilience4j.common.circuitbreaker.configuration.CircuitBreakerConfigCustomizer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
@@ -14,6 +17,8 @@ import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring6.view.reactive.ThymeleafReactiveViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 
+import java.time.Duration;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -114,6 +119,24 @@ public class WebConfig implements ApplicationContextAware, WebFluxConfigurer  {
         messageSource.setDefaultEncoding("UTF-8"); // El codificador por defecto debe ser UTF-8 para permitir tildes y ñ
         messageSource.setCacheSeconds(5); // Definimos cuanto tiempo los mensajes se mantendrán en cache
         return messageSource;
+    }
+
+    /***
+     * Circuit breaker configuration
+     *
+     */
+    @Bean
+    public CircuitBreakerRegistry circuitBreakerConfigCustomizer(){
+        CircuitBreakerConfig externalServiceFooConfig = CircuitBreakerConfig.custom()
+                .slidingWindowSize(10)
+                .slidingWindowType(CircuitBreakerConfig.SlidingWindowType.COUNT_BASED)
+                .waitDurationInOpenState(Duration.ofSeconds(1))
+                .minimumNumberOfCalls(5)
+                .failureRateThreshold(50.0f)
+                .build();
+        return CircuitBreakerRegistry.of(
+                Map.of("test", externalServiceFooConfig)
+        );
     }
 
 
