@@ -2,6 +2,7 @@ package com.udemy.webFlux.mvc.api;
 
 import com.udemy.webFlux.mvc.core.constant.ApiNames;
 import com.udemy.webFlux.mvc.dto.ProductDTO;
+import com.udemy.webFlux.mvc.models.Product;
 import com.udemy.webFlux.mvc.service.IProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -30,11 +32,12 @@ public class ProductApiController {
             summary = "List All Products",
             tags = {"product"},
             responses = {
-                    @ApiResponse(responseCode = "200", description = "List of data", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServerResponse.class))),
+                    @ApiResponse(responseCode = "200", description = "List of data", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductDTO.class))),
             }
     )
     @GetMapping(produces = {"application/json"})
-    public Mono<ServerResponse> getAllProducts() {
-        return ServerResponse.ok().body(productService.getAllProducts(), ProductDTO.class);
+    public Flux<ProductDTO> getAllProducts() {
+        System.out.println("HHHHH");
+        return productService.getAllProducts();
     }
 }

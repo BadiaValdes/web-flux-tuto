@@ -58,7 +58,6 @@ public class ProductService implements IProductService {
                     return productRepository
                             .save(product);
                 })
-
                 .flatMap(data -> file
                         .transferTo(root.resolve(file.filename()))
                         .thenReturn(data)

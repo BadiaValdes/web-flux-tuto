@@ -24,11 +24,7 @@ import reactor.netty.http.client.HttpClient;
 import java.time.Duration;
 
 @Service
-@RequiredArgsConstructor
 public class CustomWebClient {
-    @Autowired
-    private CircuitBreakerRegistry circuitBreakerRegistry;
-
     private static final Logger log = LoggerFactory.getLogger(ProductService.class);
 
     private final WebClient webClient;
