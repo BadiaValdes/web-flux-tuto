@@ -29,9 +29,4 @@ public class Category {
     private Date createdAt;
     @LastModifiedDate
     private Date lastModifiedAt;
-
-    /** FK */
-    @ReadOnlyProperty
-    @DocumentReference(lookup = "{'category':?#{#self._id}}")
-    private List<Product> productList;
 }

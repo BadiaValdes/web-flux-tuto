@@ -1,0 +1,52 @@
+spring:
+  data:
+    mongodb:
+      database: "spring_boot"
+      username: "spring_boot"
+      password: "spring_boot"
+      port: 27020
+      host: "localhost"
+  thymeleaf:
+    reactive:
+      max-chunk-size: 1024
+  application:
+    name: Web Flux MVC
+  messages:
+    basename: messages
+    encoding: UTF-8
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /swagger-doc/v3/api-docs
+  swagger-ui:
+    path: /swagger-doc/swagger-ui.html
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      testA:
+        register-health-indicator: true
+        sliding-window-size: 100
+        sliding-window-type: COUNT_BASED
+        permitted-number-of-calls-in-half-open-state: 5
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        event-consumer-buffer-size: 10
+        record-exceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+          - java.io.IOException
+          - java.util.concurrent.TimeoutException
+
+server:
+  port: 8081
+
+upload:
+  dir: ./src/main/resources/upload
+

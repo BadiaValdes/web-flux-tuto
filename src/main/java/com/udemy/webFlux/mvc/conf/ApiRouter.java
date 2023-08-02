@@ -33,7 +33,7 @@ public class ApiRouter {
     @RouterOperations( // Nos permite crear un objeto de documentación de operaciones de rutas
             {
                     @RouterOperation( // Esto lo hacemos por cada ruta que queramos documentar.
-                            path = ApiNames.API_BASE + ApiNames.API_PRODUCT, // El path que estamos utilizando aqui es el mismo que debemos poner en la ruta
+                            path = ApiNames.API_BASE_R + ApiNames.API_PRODUCT, // El path que estamos utilizando aqui es el mismo que debemos poner en la ruta
                             produces = {
                                     MediaType.APPLICATION_JSON_VALUE // Formato del dato que vamos a devolver
                             },
@@ -55,7 +55,7 @@ public class ApiRouter {
                     ),
 
                     @RouterOperation(
-                            path = ApiNames.API_BASE + ApiNames.API_PRODUCT + "/{id}",
+                            path = ApiNames.API_BASE_R + ApiNames.API_PRODUCT + "/{id}",
                             produces = {
                                     MediaType.APPLICATION_JSON_VALUE
                             },
@@ -80,7 +80,7 @@ public class ApiRouter {
                     ),
 
                     @RouterOperation(
-                            path = ApiNames.API_BASE + ApiNames.API_PRODUCT,
+                            path = ApiNames.API_BASE_R + ApiNames.API_PRODUCT,
                             produces = {
                                     MediaType.APPLICATION_JSON_VALUE
                             },
@@ -104,10 +104,22 @@ public class ApiRouter {
             }
     )
     RouterFunction<ServerResponse> routerProduct (ProductApiHandler productApiHandler){
+
+        RouterFunction<ServerResponse> person = RouterFunctions
+                .route()
+                .path(ApiNames.API_PRODUCT, // Nos permite crear rutas anidadas
+                        builder -> // El builder es el mismo route
+                                builder
+                                        .GET(productApiHandler::getAllProducts) // Definimos las rutas a nuestro gusto
+                                        .GET("/{id}", productApiHandler::getOneProduct)
+                                        .POST(RequestPredicates.contentType(MediaType.MULTIPART_FORM_DATA), productApiHandler::createProduct))
+                .build();
+
         return RouterFunctions.route() // En este caso estamos siguiendo un patron Builder para constuir las rutas
-                .GET(ApiNames.API_BASE + ApiNames.API_PRODUCT, productApiHandler::getAllProducts) // Definimos las rutas a nuestro gusto
-                .GET(ApiNames.API_BASE + ApiNames.API_PRODUCT + "/{id}", productApiHandler::getOneProduct)
-                .POST(ApiNames.API_BASE + ApiNames.API_PRODUCT, RequestPredicates.contentType(MediaType.MULTIPART_FORM_DATA), productApiHandler::createProduct)
+                .path(ApiNames.API_BASE_R,
+                        builder ->
+                                builder.add(person) // Nos permite agregar otras funciones de ruteo
+                )
                 .build();
     }
 }
